@@ -3,7 +3,7 @@
 This is a simple card game architecture in elixir.
 
 ### To run the test cases run 
-```mix test --seed 0```
+```mix test```
 
 ### Steps to run the game manually:
 
