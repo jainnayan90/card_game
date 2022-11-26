@@ -5,6 +5,7 @@ defmodule CardGame.GameWorker do
 
   use GenServer
 
+  alias CardGame.ActiveGameMap
   alias CardGame.GameSupervisor
   alias CardGame.Models.Card
 
@@ -16,8 +17,8 @@ defmodule CardGame.GameWorker do
 
   @impl true
   @spec init(term()) :: {:ok, map()}
-  def init([%{id: id, players: players}]) do
-    state = initialise_game(id, players)
+  def init([%{id: id, players: players, agent_pid: agent_pid}]) do
+    state = initialise_game(id, agent_pid, players)
     {:ok, state}
   end
 
@@ -38,7 +39,7 @@ defmodule CardGame.GameWorker do
           {:reply, {:ok, result}, state}
 
         {:ok, winners} ->
-          state = initialise_game(state.id, state.original_players)
+          state = initialise_game(state.id, state.agent_pid, state.original_players)
           {:reply, {:ok, {:round_finished, winners}}, state}
       end
     else
@@ -78,13 +79,15 @@ defmodule CardGame.GameWorker do
     end
   end
 
-  defp initialise_game(id, players) do
+  defp initialise_game(id, agent_pid, players) do
     deck = prepare_deck()
     {deck, player_cards} = get_player_cards(deck, [], 8)
     {_deck, bot_cards} = get_player_cards(deck, [], 8)
 
     players1 =
       Enum.map(players, fn {k, v} ->
+        ActiveGameMap.put(agent_pid, k, id)
+
         %{
           player_id: k,
           name: v,
@@ -94,7 +97,14 @@ defmodule CardGame.GameWorker do
         }
       end)
 
-    %{id: id, players: players1, current_round: 1, turns_played: 0, original_players: players}
+    %{
+      id: id,
+      players: players1,
+      current_round: 1,
+      turns_played: 0,
+      original_players: players,
+      agent_pid: agent_pid
+    }
   end
 
   defp get_winners([], winners, _), do: winners

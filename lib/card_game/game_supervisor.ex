@@ -17,9 +17,9 @@ defmodule CardGame.GameSupervisor do
     DynamicSupervisor.init(strategy: :one_for_one)
   end
 
-  def start_game(players) do
+  def start_game(players, agent_pid) do
     id = UUID.uuid4()
-    child_spec = {GameWorker, [%{id: id, players: players}]}
+    child_spec = {GameWorker, [%{id: id, players: players, agent_pid: agent_pid}]}
     DynamicSupervisor.start_child(__MODULE__, child_spec)
     id
   end

@@ -48,6 +48,11 @@ defmodule CardGame.GameManagerTest do
       assert 8 = length(player1_cards)
       assert 2 = length(games)
     end
+
+    test "a player cannot start a new game while playing a game." do
+      assert {:error, "Player already playing a different game."} =
+               GameManager.play(%{player_id: 3, player_name: "bar", level: "1"})
+    end
   end
 
   describe "game manager - play turn - " do

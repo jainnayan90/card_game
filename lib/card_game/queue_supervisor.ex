@@ -4,6 +4,8 @@ defmodule CardGame.QueueSupervisor do
   """
 
   use Supervisor
+
+  alias CardGame.ActiveGameMap
   alias CardGame.QueueWorker
 
   @queues ["1"]
@@ -14,8 +16,8 @@ defmodule CardGame.QueueSupervisor do
 
   @impl true
   def init(_opts) do
-    children = get_queue_children(@queues)
-
+    {:ok, agent_pid} = ActiveGameMap.start_link()
+    children = get_queue_children(@queues, agent_pid)
     Supervisor.init(children, strategy: :one_for_one)
   end
 
@@ -29,11 +31,11 @@ defmodule CardGame.QueueSupervisor do
     end
   end
 
-  defp get_queue_children(queues) do
+  defp get_queue_children(queues, agent_pid) do
     Enum.map(
       queues,
       fn queue ->
-        {QueueWorker, [%{queue_name: get_queue_name(queue)}]}
+        {QueueWorker, [%{queue_name: get_queue_name(queue), agent_pid: agent_pid}]}
       end
     )
   end
