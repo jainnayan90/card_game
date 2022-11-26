@@ -16,7 +16,7 @@ This is a simple card game architecture in elixir.
 3) now to add a new player fire command
     - ```CardGame.play(%{player_id: 1, player_name: "john", level: "1"})```
 
-    - change the player id accordingly to add new players
+    - change the player id accordingly to add new players. The game will start  everytime after three players are added.
 
 4) to get cards alloted to a player use command
     - ```CardGame.get_player_cards(id, player_id)```
