@@ -22,6 +22,8 @@ This is a simple card game architecture in elixir.
     - ```CardGame.get_player_cards(id, player_id)```
 
     - Here id is the id of the game on which players are playing. You will get the id of the game in response  when a third player joins the game. player_id is the id of the player.
+    
+    - Sample card  ```%CardGame.Models.Card{card_val: 31, card_color: "Heart", card_str: "5"}```
 
 5) to play a turn
     - ```CardGame.play_turn(%{id: game_id, player_id: player_id, card_val: card_val})```
