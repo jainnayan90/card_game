@@ -240,10 +240,10 @@ defmodule CardGame.GameWorker do
     %{state | players: players, turns_played: turns_played, current_round: next_round}
   end
 
-  def get_current_round(turns_played, current_round) when turns_played == 3,
+  defp get_current_round(turns_played, current_round) when turns_played == 3,
     do: {0, current_round + 1}
 
-  def get_current_round(turns_played, current_round), do: {turns_played, current_round}
+  defp get_current_round(turns_played, current_round), do: {turns_played, current_round}
 
   defp prepare_deck() do
     cards = Enum.to_list(1..52)
